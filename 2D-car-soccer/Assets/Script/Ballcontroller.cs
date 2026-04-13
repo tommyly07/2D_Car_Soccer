@@ -3,11 +3,12 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     [Header("Ball Settings")]
-    [SerializeField] private float kickForce = 8f;
+    public float kickForce = 8f;
+    public float magnusCoefficient = 0.02f;
 
     [Header("Goal Line X Positions")]
-    [SerializeField] private float leftGoalX = -8f;
-    [SerializeField] private float rightGoalX = 8f;
+    public float leftGoalX = -8f;
+    public float rightGoalX = 8f;
 
     private Rigidbody2D rb;
     private bool goalScored = false;
@@ -39,6 +40,19 @@ public class BallController : MonoBehaviour
             OnGoalScored(1);
         else if (transform.position.x <= leftGoalX)
             OnGoalScored(2);
+    }
+
+
+    //Ballgeschwindigkeit anhand von Spin angepasst
+    public void FixedUpdate()
+    {
+        if (goalScored || waitingForTouch) return;
+
+        Vector2 velocity = rb.linearVelocity;
+        float spin = rb.angularVelocity;
+
+        Vector2 magnusForce = new Vector2(-velocity.y, velocity.x) * spin * magnusCoefficient;
+        rb.AddForce(magnusForce, ForceMode2D.Force);
     }
 
     private void OnGoalScored(int scoringPlayer)
