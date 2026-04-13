@@ -7,8 +7,8 @@ public class BallController : MonoBehaviour
     public float magnusCoefficient = 0.0002f;
 
     [Header("Goal Line X Positions")]
-    public float leftGoalX = -8f;
-    public float rightGoalX = 8f;
+    public float leftGoalX = -7.5f;
+    public float rightGoalX = 7.5f;
 
     private Rigidbody2D rb;
     private bool goalScored = false;
