@@ -4,7 +4,7 @@ public class BallController : MonoBehaviour
 {
     [Header("Ball Settings")]
     public float kickForce = 8f;
-    public float magnusCoefficient = 0.02f;
+    public float magnusCoefficient = 0.0002f;
 
     [Header("Goal Line X Positions")]
     public float leftGoalX = -8f;
