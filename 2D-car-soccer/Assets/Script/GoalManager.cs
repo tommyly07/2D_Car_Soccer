@@ -17,23 +17,23 @@ public class GoalManager : MonoBehaviour
         p2StartPos = player2.position;
     }
 
-    public void ScoreGoal()
+    public void ScoreGoal(int scoringPlayer)
     {
         Debug.Log("Tor geschossen!");
+        GameManager.Instance.OnGoalScored(scoringPlayer);
         ResetMatch();
     }
 
- 
     void ResetMatch()
-{
-    ball.position = ballStartPos;
-    player1.position = p1StartPos;
-    player2.position = p2StartPos;
+    {
+        ball.position = ballStartPos;
+        player1.position = p1StartPos;
+        player2.position = p2StartPos;
 
-    ball.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-    ball.GetComponent<Rigidbody2D>().angularVelocity = 0f;
-    
-    player1.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-    player2.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-}
+        ball.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        ball.GetComponent<Rigidbody2D>().angularVelocity = 0f;
+
+        player1.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        player2.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+    }
 }

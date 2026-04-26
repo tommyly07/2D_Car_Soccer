@@ -2893,8 +2893,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   player1: {fileID: 43405190}
   player2: {fileID: 1629508310}
-  player1SpawnPos: {x: 0, y: 0}
-  player2SpawnPos: {x: 0, y: 0}
   ball: {fileID: 1637526826}
 --- !u!4 &963821411
 Transform:
@@ -2957,6 +2955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalTrigger
   goalManager: {fileID: 963821412}
+  scoringPlayer: 2
 --- !u!4 &1408179279
 Transform:
   m_ObjectHideFlags: 0
@@ -3373,8 +3372,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BallController
   kickForce: 2
   magnusCoefficient: 0.0002
-  leftGoalX: -8
-  rightGoalX: 8
 --- !u!1 &1798125256
 GameObject:
   m_ObjectHideFlags: 0
@@ -3406,6 +3403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoalTrigger
   goalManager: {fileID: 963821412}
+  scoringPlayer: 1
 --- !u!4 &1798125259
 Transform:
   m_ObjectHideFlags: 0
