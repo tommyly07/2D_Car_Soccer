@@ -30,10 +30,15 @@ public class GoalManager : MonoBehaviour
         player1.position = p1StartPos;
         player2.position = p2StartPos;
 
+        player1.rotation = Quaternion.Euler(0f, 0f, 0f);   
+        player2.rotation = Quaternion.Euler(0f, 0f, 180f); 
+
         ball.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         ball.GetComponent<Rigidbody2D>().angularVelocity = 0f;
 
         player1.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        player1.GetComponent<Rigidbody2D>().angularVelocity = 0f;
         player2.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        player2.GetComponent<Rigidbody2D>().angularVelocity = 0f;
     }
 }
