@@ -6,15 +6,15 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("Player References")]
-    [SerializeField] private GameObject player1;
-    [SerializeField] private GameObject player2;
+    public GameObject player1;
+    public GameObject player2;
 
     [Header("Spawn Positions")]
-    [SerializeField] private Vector2 player1SpawnPos = new Vector2(-3f, 0f);
-    [SerializeField] private Vector2 player2SpawnPos = new Vector2(3f, 0f);
+    public Vector2 player1SpawnPos = new Vector2(-3f, 0f);
+    public Vector2 player2SpawnPos = new Vector2(3f, 0f);
 
     [Header("References")]
-    [SerializeField] private BallController ball;
+    public BallController ball;
 
     public int ScorePlayer1 { get; private set; } = 0;
     public int ScorePlayer2 { get; private set; } = 0;
