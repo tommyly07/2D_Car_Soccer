@@ -11,21 +11,29 @@ public class ScoreUI : MonoBehaviour
     private GameManager gameManager;
 
     private void Start()
-    {
-        gameManager = GameManager.Instance;
-        if (gameManager == null) return;
+{
+    gameManager = GameManager.Instance;
+    if (gameManager == null) return;
 
-        gameManager.OnScoreChanged += UpdateScore;
+    // HIER IST DIE ÄNDERUNG: Wir rufen jetzt HandleScoreChanged auf
+    gameManager.OnScoreChanged += HandleScoreChanged; 
 
-        UpdateScore();
-        if (goalBanner != null) goalBanner.SetActive(false);
-    }
+    UpdateScore();
+    if (goalBanner != null) goalBanner.SetActive(false);
+}
 
     private void OnDestroy()
-    {
-        if (gameManager == null) return;
-        gameManager.OnScoreChanged -= UpdateScore;
-    }
+{
+    if (gameManager == null) return;
+    gameManager.OnScoreChanged -= HandleScoreChanged; // Auch hier anpassen
+}
+
+// Diese neue Funktion ist die "Brücke", die das Event empfängt
+    private void HandleScoreChanged(int scoringPlayer)
+{
+        UpdateScore();              // 1. Punkte aktualisieren
+        ShowGoalBanner(scoringPlayer); // 2. Banner zeigen
+}
 
     private void UpdateScore()
     {

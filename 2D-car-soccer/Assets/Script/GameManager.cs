@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public int ScorePlayer1 { get; private set; } = 0;
     public int ScorePlayer2 { get; private set; } = 0;
 
-    public System.Action OnScoreChanged;
+    public System.Action<int> OnScoreChanged;
 
     private void Awake()
     {
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         else
             ScorePlayer2++;
 
-        OnScoreChanged?.Invoke();
+        OnScoreChanged?.Invoke(scoringPlayer);
 
         GameObject losingPlayer = scoringPlayer == 1 ? player2 : player1;
         ball?.PlaceBallAtCenter(losingPlayer);
