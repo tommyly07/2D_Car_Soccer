@@ -1,0 +1,38 @@
+{
+    "asset": "c81dc0413e408d94a921a2ea7b098b34",
+    "fileName": "019e6134-d7ba-70ce-a914-8123ba746c14.png",
+    "prompt": "A UI slider track sprite, horizontal, long and thin with rounded ends, dark muted purple-gray color, inset and beveled look with soft inner shadows, matching the style of the provided reference image. Pure white background.",
+    "negativePrompt": "",
+    "model": "gemini-3.1-flash",
+    "modelName": "Gemini 3.1 Nano Banana 2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "c0b4386ad35190a4f9aebb27bbea7799",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

@@ -1,0 +1,28 @@
+{
+    "asset": "2edf083e8341abd4c8999b2bda977aea",
+    "fileName": "019e6182-9126-788d-ad02-907343faae28.jpg",
+    "prompt": "A professional game pause menu panel background. Dark semi-transparent base with subtle gradient edges, modern rounded corners, glowing blue accent border. Clean, game-ready style. 512x512 seamless.",
+    "negativePrompt": "",
+    "model": "game-ui-essentials-2",
+    "modelName": "Game UI Essentials 2.0",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 2048,
+        "height": 2048
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}
