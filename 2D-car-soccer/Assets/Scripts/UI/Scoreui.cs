@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ScoreUI : MonoBehaviour
 {
@@ -8,32 +9,90 @@ public class ScoreUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI goalBannerText;  // "TOR!" kurz einblenden (optional)
     [SerializeField] private GameObject goalBanner;           // Panel das kurz aufpoppt
 
+    [Header("Timer & GameOver References")]
+    [SerializeField] private TextMeshProUGUI timerText;       // Displays "5:00"
+    [SerializeField] private GameObject gameOverPanel;        // GameOver UI Panel
+    [SerializeField] private TextMeshProUGUI winnerText;      // Displays who won
+    [SerializeField] private UnityEngine.UI.Button mainMenuButton; // Returns to Main Menu
+
     private GameManager gameManager;
 
     private void Start()
-{
-    gameManager = GameManager.Instance;
-    if (gameManager == null) return;
+    {
+        gameManager = GameManager.Instance;
+        if (gameManager == null) return;
 
-    // HIER IST DIE ÄNDERUNG: Wir rufen jetzt HandleScoreChanged auf
-    gameManager.OnScoreChanged += HandleScoreChanged; 
+        gameManager.OnScoreChanged += HandleScoreChanged; 
+        gameManager.OnTimerChanged += HandleTimerChanged;
+        gameManager.OnGameOver += HandleGameOver;
 
-    UpdateScore();
-    if (goalBanner != null) goalBanner.SetActive(false);
-}
+        UpdateScore();
+        if (goalBanner != null) goalBanner.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.AddListener(LoadMainMenu);
+        }
+    }
 
     private void OnDestroy()
-{
-    if (gameManager == null) return;
-    gameManager.OnScoreChanged -= HandleScoreChanged; // Auch hier anpassen
-}
+    {
+        if (gameManager == null) return;
+        gameManager.OnScoreChanged -= HandleScoreChanged; 
+        gameManager.OnTimerChanged -= HandleTimerChanged;
+        gameManager.OnGameOver -= HandleGameOver;
+    }
 
-// Diese neue Funktion ist die "Brücke", die das Event empfängt
     private void HandleScoreChanged(int scoringPlayer)
-{
+    {
         UpdateScore();              // 1. Punkte aktualisieren
         ShowGoalBanner(scoringPlayer); // 2. Banner zeigen
-}
+    }
+
+    private void HandleTimerChanged(float timeRemaining)
+    {
+        if (timerText == null) return;
+        int minutes = Mathf.FloorToInt(timeRemaining / 60F);
+        int seconds = Mathf.FloorToInt(timeRemaining - minutes * 60);
+        timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
+    }
+
+    private void HandleGameOver()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+        if (winnerText != null)
+        {
+            if (gameManager.ScorePlayer1 > gameManager.ScorePlayer2)
+            {
+                winnerText.text = "SPIELER 1 GEWINNT!";
+            }
+            else if (gameManager.ScorePlayer2 > gameManager.ScorePlayer1)
+            {
+                winnerText.text = "SPIELER 2 GEWINNT!";
+            }
+            else
+            {
+                winnerText.text = "UNENTSCHIEDEN!";
+            }
+        }
+
+        // Auto-focus the main menu button for keyboard/controller navigation
+        if (mainMenuButton != null && UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(mainMenuButton.gameObject);
+        }
+    }
+
+    private void LoadMainMenu()
+    {
+        Time.timeScale = 1f; // Ensure timescale is restored
+        SceneManager.LoadScene("MainMenu");
+    }
 
     private void UpdateScore()
     {

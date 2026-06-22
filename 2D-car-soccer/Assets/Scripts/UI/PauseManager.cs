@@ -37,6 +37,11 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
+        {
+            return;
+        }
+
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (settingsMenuUI != null && settingsMenuUI.activeSelf)
