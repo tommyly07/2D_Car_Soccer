@@ -10,6 +10,7 @@ public class PauseManager : MonoBehaviour
 
     [SerializeField] private GameObject pauseMenuUI;
     [SerializeField] private GameObject settingsMenuUI;
+    [SerializeField] private GameObject pauseHUDButton;
 
     void Start()
     {
@@ -22,6 +23,14 @@ public class PauseManager : MonoBehaviour
         {
             settingsMenuUI.SetActive(false);
         }
+        
+        // Only show the pause button in gameplay, hide it if we are on the MainMenu scene
+        if (pauseHUDButton != null)
+        {
+            bool isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
+            pauseHUDButton.SetActive(!isMainMenu);
+        }
+
         isPaused = false;
         Time.timeScale = 1f;
     }

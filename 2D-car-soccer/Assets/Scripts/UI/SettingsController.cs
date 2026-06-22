@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
-using System.Collections.Generic;
 
 public class SettingsController : MonoBehaviour
 {
@@ -13,7 +12,9 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private GameObject keybindItemPrefab;
 
     [Header("Settings")]
-    [SerializeField] private InputActionAsset inputActions;
+    [Tooltip("Only the Input Action assets actually used by gameplay (e.g. PlayerAction1, PlayerAction2). " +
+             "Only these are shown in the keybind list.")]
+    [SerializeField] private InputActionAsset[] inputActionAssets;
 
     private void OnEnable()
     {
@@ -24,11 +25,7 @@ public class SettingsController : MonoBehaviour
         UpdateVolumeUI(savedVolume);
 
         // Load Rebinds
-string savedRebinds = PlayerPrefs.GetString("InputRebinds", string.Empty);
-        if (!string.IsNullOrEmpty(savedRebinds))
-        {
-            inputActions.LoadBindingOverridesFromJson(savedRebinds);
-        }
+        LoadRebinds();
 
         RefreshKeybinds();
     }
@@ -49,53 +46,76 @@ string savedRebinds = PlayerPrefs.GetString("InputRebinds", string.Empty);
     }
 
     public void RefreshKeybinds()
-{
+    {
+        if (keybindContainer == null || keybindItemPrefab == null) return;
+
         // Clear existing
         foreach (Transform child in keybindContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Generate keybind items for gameplay maps (excluding UI)
-        foreach (var map in inputActions.actionMaps)
+        if (inputActionAssets == null) return;
+
+        // Only show keybinds from the input assets actually used by gameplay.
+        foreach (var asset in inputActionAssets)
         {
-            if (map.name == "UI") continue;
+            if (asset == null) continue;
 
-            // Optional: Add a map header
-            GameObject header = Instantiate(keybindItemPrefab, keybindContainer);
-            var headerTexts = header.GetComponentsInChildren<TMP_Text>();
-            headerTexts[0].text = $"--- {map.name.ToUpper()} ---";
-            headerTexts[1].text = "";
-            header.GetComponentInChildren<Button>().gameObject.SetActive(false);
-
-            foreach (var action in map.actions)
+            foreach (var map in asset.actionMaps)
             {
-                // Skip if no bindings
-                if (action.bindings.Count == 0) continue;
+                // Never show the auto-generated UI navigation map.
+                if (map.name == "UI") continue;
 
-                // Create item for each binding (handling composites)
-                for (int i = 0; i < action.bindings.Count; i++)
+                bool headerAdded = false;
+
+                foreach (var action in map.actions)
                 {
-                    var binding = action.bindings[i];
+                    if (action.bindings.Count == 0) continue;
 
-                    // If it's a composite, we usually want to rebind the parts, not the root
-                    if (binding.isComposite) continue;
-
-                    GameObject item = Instantiate(keybindItemPrefab, keybindContainer);
-                    var texts = item.GetComponentsInChildren<TMP_Text>();
-                    var button = item.GetComponentInChildren<Button>();
-
-                    string label = action.name;
-                    if (binding.isPartOfComposite)
+                    for (int i = 0; i < action.bindings.Count; i++)
                     {
-                        label = $"{action.name} - {binding.name}";
+                        var binding = action.bindings[i];
+
+                        // Skip composite roots (rebind the parts, not the container).
+                        if (binding.isComposite) continue;
+
+                        // Skip bindings with no key assigned - these aren't actually used.
+                        if (string.IsNullOrEmpty(binding.effectivePath)) continue;
+
+                        // Add the map header lazily, only if it has real bindings to show.
+                        if (!headerAdded)
+                        {
+                            GameObject header = Instantiate(keybindItemPrefab, keybindContainer);
+                            var headerTexts = header.GetComponentsInChildren<TMP_Text>();
+                            if (headerTexts.Length > 0) headerTexts[0].text = $"--- {map.name.ToUpper()} ---";
+                            if (headerTexts.Length > 1) headerTexts[1].text = "";
+                            var headerButton = header.GetComponentInChildren<Button>();
+                            if (headerButton != null) headerButton.gameObject.SetActive(false);
+                            headerAdded = true;
+                        }
+
+                        GameObject item = Instantiate(keybindItemPrefab, keybindContainer);
+                        var texts = item.GetComponentsInChildren<TMP_Text>();
+                        var button = item.GetComponentInChildren<Button>();
+
+                        string label = action.name;
+                        if (binding.isPartOfComposite)
+                        {
+                            label = $"{action.name} - {binding.name}";
+                        }
+
+                        if (texts.Length > 0) texts[0].text = label; // Action Name
+                        TMP_Text statusText = texts.Length > 1 ? texts[1] : null;
+                        if (statusText != null) statusText.text = action.GetBindingDisplayString(i); // Current Binding
+
+                        int bindingIndex = i;
+                        InputAction capturedAction = action;
+                        if (button != null)
+                        {
+                            button.onClick.AddListener(() => StartRebinding(capturedAction, bindingIndex, statusText));
+                        }
                     }
-
-                    texts[0].text = label; // Action Name
-                    texts[1].text = action.GetBindingDisplayString(i); // Current Binding
-
-                    int bindingIndex = i;
-                    button.onClick.AddListener(() => StartRebinding(action, bindingIndex, texts[1]));
                 }
             }
         }
@@ -127,17 +147,49 @@ string savedRebinds = PlayerPrefs.GetString("InputRebinds", string.Empty);
             .Start();
     }
 
+    private void LoadRebinds()
+    {
+        if (inputActionAssets == null) return;
+
+        foreach (var asset in inputActionAssets)
+        {
+            if (asset == null) continue;
+            string saved = PlayerPrefs.GetString(RebindKey(asset), string.Empty);
+            if (!string.IsNullOrEmpty(saved))
+            {
+                asset.LoadBindingOverridesFromJson(saved);
+            }
+        }
+    }
+
     private void SaveRebinds()
     {
-        string rebinds = inputActions.SaveBindingOverridesAsJson();
-        PlayerPrefs.SetString("InputRebinds", rebinds);
+        if (inputActionAssets == null) return;
+
+        foreach (var asset in inputActionAssets)
+        {
+            if (asset == null) continue;
+            PlayerPrefs.SetString(RebindKey(asset), asset.SaveBindingOverridesAsJson());
+        }
         PlayerPrefs.Save();
+    }
+
+    private static string RebindKey(InputActionAsset asset)
+    {
+        return "InputRebinds_" + asset.name;
     }
 
     public void ResetSettings()
     {
-        inputActions.RemoveAllBindingOverrides();
-        PlayerPrefs.DeleteKey("InputRebinds");
+        if (inputActionAssets != null)
+        {
+            foreach (var asset in inputActionAssets)
+            {
+                if (asset == null) continue;
+                asset.RemoveAllBindingOverrides();
+                PlayerPrefs.DeleteKey(RebindKey(asset));
+            }
+        }
         RefreshKeybinds();
     }
 
