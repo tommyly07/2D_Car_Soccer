@@ -8,18 +8,22 @@ public class GameManager : MonoBehaviour
     [Header("Player References")]
     public GameObject player1;
     public GameObject player2;
-
     public BallController ball;
+
+    [Header("Match Settings")]
+    public float matchLength = 300f; 
 
     public int ScorePlayer1 { get; private set; } = 0;
     public int ScorePlayer2 { get; private set; } = 0;
+
+    public float CurrentTime { get; private set; }
+    public bool IsGameOver { get; private set; } = false;
 
     public System.Action<int> OnScoreChanged;
 
     [Header("Timer Settings")]
     [SerializeField] private float gameDuration = 300f; // 5 minutes in seconds
     private float timeRemaining;
-    public bool IsGameOver { get; private set; } = false;
 
     public System.Action<float> OnTimerChanged;
     public System.Action OnGameOver;
@@ -33,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        CurrentTime = matchLength; 
         ball?.PlaceBallAtCenter(player1);
     }
 

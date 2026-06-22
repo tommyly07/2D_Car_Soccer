@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 public class ScoreUI : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI scoreText;       // z.B. "2 : 1" oben Mitte
-    [SerializeField] private TextMeshProUGUI goalBannerText;  // "TOR!" kurz einblenden (optional)
-    [SerializeField] private GameObject goalBanner;           // Panel das kurz aufpoppt
+    [SerializeField] private TextMeshProUGUI scoreText;       
+    [SerializeField] private TextMeshProUGUI goalBannerText;  
+    [SerializeField] private GameObject goalBanner;           
 
-    [Header("Timer & GameOver References")]
+    [Header("Timer & Game Over References")]
     [SerializeField] private TextMeshProUGUI timerText;       // Displays "5:00"
     [SerializeField] private GameObject gameOverPanel;        // GameOver UI Panel
     [SerializeField] private TextMeshProUGUI winnerText;      // Displays who won
