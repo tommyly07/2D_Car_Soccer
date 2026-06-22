@@ -4,36 +4,57 @@ using TMPro;
 public class ScoreUI : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI scoreText;       // z.B. "2 : 1" oben Mitte
-    [SerializeField] private TextMeshProUGUI goalBannerText;  // "TOR!" kurz einblenden (optional)
-    [SerializeField] private GameObject goalBanner;           // Panel das kurz aufpoppt
+    [SerializeField] private TextMeshProUGUI scoreText;       
+    [SerializeField] private TextMeshProUGUI goalBannerText;  
+    [SerializeField] private GameObject goalBanner;           
+
+    [Header("Timer & Game Over References")]
+    [SerializeField] private TextMeshProUGUI timerText;       
+    [SerializeField] private GameObject gameOverPanel;        
 
     private GameManager gameManager;
 
     private void Start()
-{
-    gameManager = GameManager.Instance;
-    if (gameManager == null) return;
+    {
+        gameManager = GameManager.Instance;
+        if (gameManager == null) return;
 
-    // HIER IST DIE ÄNDERUNG: Wir rufen jetzt HandleScoreChanged auf
-    gameManager.OnScoreChanged += HandleScoreChanged; 
+        gameManager.OnScoreChanged += HandleScoreChanged; 
 
-    UpdateScore();
-    if (goalBanner != null) goalBanner.SetActive(false);
-}
+        UpdateScore();
+        if (goalBanner != null) goalBanner.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false); 
+    }
+
+    private void Update()
+    {
+        if (gameManager == null) return;
+
+        if (timerText != null)
+        {
+            int minutes = Mathf.FloorToInt(gameManager.CurrentTime / 60);
+            int seconds = Mathf.FloorToInt(gameManager.CurrentTime % 60);
+            
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+
+        if (gameManager.IsGameOver && gameOverPanel != null && !gameOverPanel.activeSelf)
+        {
+            gameOverPanel.SetActive(true);
+        }
+    }
 
     private void OnDestroy()
-{
-    if (gameManager == null) return;
-    gameManager.OnScoreChanged -= HandleScoreChanged; // Auch hier anpassen
-}
+    {
+        if (gameManager == null) return;
+        gameManager.OnScoreChanged -= HandleScoreChanged; 
+    }
 
-// Diese neue Funktion ist die "Brücke", die das Event empfängt
     private void HandleScoreChanged(int scoringPlayer)
-{
-        UpdateScore();              // 1. Punkte aktualisieren
-        ShowGoalBanner(scoringPlayer); // 2. Banner zeigen
-}
+    {
+        UpdateScore();              
+        ShowGoalBanner(scoringPlayer); 
+    }
 
     private void UpdateScore()
     {
